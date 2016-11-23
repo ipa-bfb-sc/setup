@@ -90,6 +90,7 @@ Run the Install script on pc2:
 \end{lstlisting}
 
 Please take your time to check that the given parameters are right before continue, after the verification choose the option 3 (Full installation). The installation will take around 30 minutes , depending on the internet connection. During the process the user will be asked to confirm and verify the selected options. 
+\textcolor{red}{There will be one question:"Do you agree with above patent declaration?", you should say "no".}
 
 After the successfully pc2 installation and with all the computers connected to the router, repeat the process with the client pcs (cob3-X-pc1):
 
@@ -103,13 +104,42 @@ Run the Install script on pc2:
 ./InstallCob3.sh -r cob3-X -ip 192.168.X.102 -m master
 \end{lstlisting}
 
-And choose the option 4 (Cob setup).
+And choose the option 4 (Cob setup). \newline
+\textcolor{red}{There are several errors you might meet:
+\begin{itemize}
+\item "/u/robot/git/care-o-bot/src/src workspace doesn't exist": add  "cd /u/robot/git/care-o-bot" before "catkin\underline{\space}make install".
+\item "ssh root@cob3-6-pc1: connection refused": open /etc/ssh/sshd\underline{\space}config file, make sure this is correct: "PermitRootLogin yes".
+\end{itemize}
+}
 
 \subsection{Setup hardware components}
 In order to use the different hardware components we have to install the drivers and set permission rights. All hardware configuration is stored in the \texttt{cob\_hardware\_config} package.
 
 \paragraph{Setup can bus drivers}
-This step is necessary for all drivers with can bus interface (Schunk powercubes, Schunk sdh, head axis, base). In general both can drivers from Peak Systems\footnote{\url{http://www.peak-system.com/}} \texttt{libpcan} and ESD\footnote{\url{http://www.esd-electronics.com}} \texttt{libntcan} can be used. Installation instructions can be found in the package documentation of libpcan \url{http://www.ros.org/wiki/libpcan} and libntcan \url{http://www.ros.org/wiki/libntcan}.
+This step is necessary for all drivers with can bus interface (Schunk powercubes, Schunk sdh, head axis, base). In general both can drivers from Peak Systems\footnote{\url{http://www.peak-system.com/}} \texttt{libpcan} and ESD\footnote{\url{http://www.esd-electronics.com}} \texttt{libntcan} can be used. Installation instructions can be found in the package documentation of libpcan \url{http://www.ros.org/wiki/libpcan} and libntcan \url{http://www.ros.org/wiki/libntcan}.\newline
+\textcolor{red}{The installation can be done using a bash script in the \texttt{cob\_extern} package, you can clone it to your workspace use:} \begin{lstlisting}
+git clone https://github.com/ipa320/cob_extern.git
+\end{lstlisting} 
+
+\textcolor{red}{If you got some errors, you can check the possible errors posted on: \url{http://wiki.ros.org/allegro_hand_ros}.}
+\textcolor{red}{If you still can't fix the error, try to install it without the script: }
+\begin{itemize}
+\item \textcolor{red}{change to pc1, download "peak-linux-driver-8.2" package from: \url{http://www.peak-system.com/fileadmin/media/linux/index.htm}, you can also download the Manual PDF as a reference.}
+\item \textcolor{red}{get into the "peak-linux-driver-8.2" package, build binaries and install package:}
+\begin{lstlisting}
+make clean
+make NET=NO_NETDEV_SUPPORT
+sudo make install
+\end{lstlisting} 
+\item \textcolor{red}{load Driver:}
+\begin{lstlisting}
+cat /proc/pcan
+sudo modprobe peak_pci
+sudo modprobe peak_usb
+\end{lstlisting} 
+\item \textcolor{red}{restart pc.}
+\end{itemize}
+
 
 \subsubsection{Scanners}
 
